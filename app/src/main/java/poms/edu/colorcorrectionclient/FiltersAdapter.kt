@@ -21,10 +21,10 @@ class FiltersAdapter(private val items: List<FilterItem>)
     override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val current_item = items[position]
+        val currentItem = items[position]
         with(holder.linearLayout) {
-            findViewById<TextView>(R.id.filter_name).text = current_item.name
-            findViewById<ImageView>(R.id.filter_item_image).imageResource = current_item.image_id
+            findViewById<TextView>(R.id.filter_name).text = currentItem.name
+            findViewById<ImageView>(R.id.filter_item_image).imageResource = currentItem.image_id
         }
     }
 
