@@ -10,10 +10,11 @@
             android:name="poms.edu.colorcorrectionclient.ImageFragment"
             android:id="@+id/image_fragment_container"
             android:layout_weight="0.8"/>
-    <fragment
+    <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:name="poms.edu.colorcorrectionclient.FiltersFragment"
             android:id="@+id/filters_fragment_container"
             android:layout_weight="0.2"/>
+            <!--android:name="poms.edu.colorcorrectionclient.FiltersFragment" !-->
+
 </LinearLayout>

@@ -3,7 +3,9 @@ package poms.edu.colorcorrectionclient
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.textView
+import org.jetbrains.anko.uiThread
 import org.jetbrains.anko.verticalLayout
 
 class MainActivity : Activity(),
@@ -16,7 +18,17 @@ class MainActivity : Activity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_main)
+        doAsync {
+            val items = loadFilterItems()
+            uiThread {
+                setContentView(R.layout.activity_main)
+                val frag: FiltersFragment =
+                    FiltersFragment.newInstance(items)
+                fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.filters_fragment_container, frag)
+                    .commit()
+            }
+        }
     }
 }

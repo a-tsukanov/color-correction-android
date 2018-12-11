@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import org.jetbrains.anko.doAsync
 
 
 /**
@@ -23,16 +24,14 @@ import android.widget.LinearLayout
  */
 class FiltersFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
-    lateinit var items: List<FilterItem>
+    private lateinit var items: List<FilterItem>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        items = loadItems()
+        doAsync {
+            items = loadFilterItems()
+        }
     }
-
-    private fun loadItems(): List<FilterItem> =
-        listOf(FilterItem("filter1", R.mipmap.icon_filter),
-            FilterItem("filter2", R.mipmap.icon_filter))
 
 
     override fun onCreateView(
@@ -86,5 +85,12 @@ class FiltersFragment : Fragment() {
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri)
+    }
+
+    companion object {
+        fun newInstance(items: List<FilterItem>): FiltersFragment =
+                FiltersFragment().apply {
+                    this.items = items
+                }
     }
 }
