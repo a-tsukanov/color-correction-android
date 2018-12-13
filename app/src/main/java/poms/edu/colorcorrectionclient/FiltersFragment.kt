@@ -10,6 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 
@@ -50,6 +54,18 @@ class FiltersFragment : Fragment() {
             )
             adapter = FiltersAdapter(items) { filterItem, position ->
                 toast("$position")
+                val url = "http://10.0.2.2:5000/get_grid_by_name?name=a"
+                val que = Volley.newRequestQueue(activity)
+                val req = StringRequest(
+                    Request.Method.GET,
+                    url,
+                    Response.Listener {
+                        toast(it.toString())
+                    },
+                    Response.ErrorListener {
+
+                    })
+                que.add(req)
             }
         }
         return layout
