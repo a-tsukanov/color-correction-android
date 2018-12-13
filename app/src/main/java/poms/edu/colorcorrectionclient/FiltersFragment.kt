@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 
 
 /**
@@ -47,7 +48,9 @@ class FiltersFragment : Fragment() {
                 LinearLayout.HORIZONTAL,
                 false
             )
-            adapter = FiltersAdapter(items)
+            adapter = FiltersAdapter(items) { filterItem, position ->
+                toast("$position")
+            }
         }
         return layout
     }

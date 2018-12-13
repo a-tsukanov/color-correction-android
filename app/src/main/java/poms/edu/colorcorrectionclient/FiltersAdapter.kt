@@ -10,8 +10,11 @@ import org.jetbrains.anko.imageResource
 
 data class FilterItem(val name: String, val image_id: Int)
 
-class FiltersAdapter(private val items: List<FilterItem>)
+class FiltersAdapter(
+    private val items: List<FilterItem>,
+    private val clickListener: (FilterItem, Int) -> Unit)
     : RecyclerView.Adapter<FiltersAdapter.ViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_filter, parent, false) as LinearLayout
@@ -25,6 +28,9 @@ class FiltersAdapter(private val items: List<FilterItem>)
         with(holder.linearLayout) {
             findViewById<TextView>(R.id.filter_name).text = currentItem.name
             findViewById<ImageView>(R.id.filter_item_image).imageResource = currentItem.image_id
+            setOnClickListener {
+                clickListener(currentItem, position)
+            }
         }
     }
 
