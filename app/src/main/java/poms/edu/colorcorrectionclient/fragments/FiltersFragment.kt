@@ -1,4 +1,4 @@
-package poms.edu.colorcorrectionclient
+package poms.edu.colorcorrectionclient.fragments
 
 import android.content.Context
 import android.net.Uri
@@ -16,6 +16,10 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+import poms.edu.colorcorrectionclient.adapters.FilterItem
+import poms.edu.colorcorrectionclient.adapters.FiltersAdapter
+import poms.edu.colorcorrectionclient.R
+import poms.edu.colorcorrectionclient.network.loadFilterItems
 
 
 /**

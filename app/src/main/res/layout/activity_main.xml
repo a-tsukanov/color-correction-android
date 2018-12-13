@@ -7,7 +7,7 @@
     <fragment
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:name="poms.edu.colorcorrectionclient.ImageFragment"
+            android:name="poms.edu.colorcorrectionclient.fragments.ImageFragment"
             android:id="@+id/image_fragment_container"
             android:layout_weight="0.8"/>
     <FrameLayout
@@ -15,6 +15,6 @@
             android:layout_height="0dp"
             android:id="@+id/filters_fragment_container"
             android:layout_weight="0.2"/>
-            <!--android:name="poms.edu.colorcorrectionclient.FiltersFragment" !-->
+            <!--android:name="poms.edu.colorcorrectionclient.fragments.FiltersFragment" !-->
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package poms.edu.colorcorrectionclient
+package poms.edu.colorcorrectionclient.adapters
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import org.jetbrains.anko.imageResource
+import poms.edu.colorcorrectionclient.R
 
 data class FilterItem(val name: String, val image_id: Int)
 
