@@ -14,12 +14,10 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import poms.edu.colorcorrectionclient.adapters.FilterItem
 import poms.edu.colorcorrectionclient.adapters.FiltersAdapter
 import poms.edu.colorcorrectionclient.R
-import poms.edu.colorcorrectionclient.network.loadFilterItems
 
 
 /**
@@ -37,9 +35,6 @@ class FiltersFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        doAsync {
-            items = loadFilterItems()
-        }
     }
 
 
