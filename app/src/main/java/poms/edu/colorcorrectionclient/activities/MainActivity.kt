@@ -3,6 +3,7 @@ package poms.edu.colorcorrectionclient.activities
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
@@ -12,6 +13,7 @@ import poms.edu.colorcorrectionclient.fragments.ImageFragment
 import poms.edu.colorcorrectionclient.R
 import poms.edu.colorcorrectionclient.network.ColorCorrectionHttpClient
 import poms.edu.colorcorrectionclient.network.parseFilterNames
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : Activity(),
     ImageFragment.OnFragmentInteractionListener,
@@ -29,6 +31,7 @@ class MainActivity : Activity(),
             val items = parseFilterNames(response!!)
             val frag: FiltersFragment =
                 FiltersFragment.newInstance(items)
+            progress_circular.visibility = View.GONE
             fragmentManager
                 .beginTransaction()
                 .replace(R.id.filters_fragment_container, frag)
