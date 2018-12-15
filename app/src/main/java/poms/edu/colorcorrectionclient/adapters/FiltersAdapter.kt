@@ -2,14 +2,17 @@ package poms.edu.colorcorrectionclient.adapters
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import com.squareup.picasso.Callback
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import poms.edu.colorcorrectionclient.R
 import kotlinx.android.synthetic.main.item_filter.view.*
 import poms.edu.colorcorrectionclient.network.ColorCorrectionHttpClient
+import java.lang.Exception
 
 
 class FiltersAdapter(
@@ -36,7 +39,16 @@ class FiltersAdapter(
                 .load(url)
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .into(filter_item_image)
+                .into(filter_item_image, object: Callback{
+                    override fun onError(e: Exception?) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onSuccess() {
+                        filter_img_progress.visibility = View.GONE
+                    }
+
+                })
 
             setOnClickListener {
                 clickListener(position)
