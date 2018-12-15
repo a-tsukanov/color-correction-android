@@ -3,17 +3,18 @@ package poms.edu.colorcorrectionclient.adapters
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
-import org.jetbrains.anko.imageResource
+import com.squareup.picasso.MemoryPolicy
+import com.squareup.picasso.NetworkPolicy
+import com.squareup.picasso.Picasso
 import poms.edu.colorcorrectionclient.R
+import kotlinx.android.synthetic.main.item_filter.view.*
+import poms.edu.colorcorrectionclient.network.ColorCorrectionHttpClient
 
-data class FilterItem(val name: String, val image_id: Int)
 
 class FiltersAdapter(
-    private val items: List<FilterItem>,
-    private val clickListener: (FilterItem, Int) -> Unit)
+    private val items: List<String>,
+    private val clickListener: (Int) -> Unit)
     : RecyclerView.Adapter<FiltersAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): ViewHolder {
@@ -27,10 +28,18 @@ class FiltersAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentItem = items[position]
         with(holder.linearLayout) {
-            findViewById<TextView>(R.id.filter_name).text = currentItem.name
-            findViewById<ImageView>(R.id.filter_item_image).imageResource = currentItem.image_id
+            filter_name.text = currentItem
+            val url = ColorCorrectionHttpClient
+                .getAbsoluteUrl("get_filter_img_by_name?name=$currentItem")
+            Picasso
+                .get()
+                .load(url)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .into(filter_item_image)
+
             setOnClickListener {
-                clickListener(currentItem, position)
+                clickListener(position)
             }
         }
     }

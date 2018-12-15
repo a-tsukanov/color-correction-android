@@ -4,14 +4,10 @@ import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import com.loopj.android.http.JsonHttpResponseHandler
-import com.loopj.android.http.RequestParams
-import cz.msebera.android.httpclient.Header
-import org.json.JSONArray
 import poms.edu.colorcorrectionclient.fragments.FiltersFragment
 import poms.edu.colorcorrectionclient.fragments.ImageFragment
 import poms.edu.colorcorrectionclient.R
-import poms.edu.colorcorrectionclient.network.ColorCorrectionHttpClient
+import poms.edu.colorcorrectionclient.network.downloadFilterNamesAsyncAndDoOnSuccess
 import poms.edu.colorcorrectionclient.network.parseFilterNames
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -26,30 +22,28 @@ class MainActivity : Activity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        downloadFilterNamesAsyncAndDoOnSuccess { _, _, response ->
+        downloadFilterNamesAsyncAndDoOnSuccess { _, response ->
+            val itemNames = parseFilterNames(response)
 
-            val items = parseFilterNames(response!!)
-            val frag: FiltersFragment =
-                FiltersFragment.newInstance(items)
-            progress_circular.visibility = View.GONE
-            fragmentManager
-                .beginTransaction()
-                .replace(R.id.filters_fragment_container, frag)
-                .commit()
+            hideProgressBar()
+            showFiltersInNewFragment(itemNames)
+
         }
     }
 
-    private fun downloadFilterNamesAsyncAndDoOnSuccess(
-        onSuccessAction: (statusCode: Int, headers: Array<out Header>?, response: JSONArray?) -> Unit) {
-
-        ColorCorrectionHttpClient.get(
-            ColorCorrectionHttpClient.getAbsoluteUrl("get_all_filters"),
-            RequestParams(),
-            object: JsonHttpResponseHandler("utf-8") {
-                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, response: JSONArray?) {
-                    onSuccessAction(statusCode, headers, response)
-                }
-            }
-        )
+    private fun hideProgressBar() {
+        progress_circular.visibility = View.GONE
     }
+
+    private fun showFiltersInNewFragment(items: List<String>) {
+
+        val frag: FiltersFragment =
+            FiltersFragment.newInstance(items)
+        fragmentManager
+            .beginTransaction()
+            .replace(R.id.filters_fragment_container, frag)
+            .commit()
+    }
+
+
 }

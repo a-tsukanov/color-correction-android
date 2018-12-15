@@ -10,14 +10,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
-import poms.edu.colorcorrectionclient.adapters.FilterItem
+import org.jetbrains.anko.uiThread
 import poms.edu.colorcorrectionclient.adapters.FiltersAdapter
 import poms.edu.colorcorrectionclient.R
+import poms.edu.colorcorrectionclient.network.ColorCorrectionHttpClient
+import java.io.IOException
 
 
 /**
@@ -31,7 +33,7 @@ import poms.edu.colorcorrectionclient.R
  */
 class FiltersFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
-    private lateinit var items: List<FilterItem>
+    private lateinit var itemNames: List<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,20 +53,26 @@ class FiltersFragment : Fragment() {
                 LinearLayout.HORIZONTAL,
                 false
             )
-            adapter = FiltersAdapter(items) { filterItem, position ->
+            adapter = FiltersAdapter(itemNames) { position ->
                 toast("$position")
-                val url = "http://10.0.2.2:5000/get_grid_by_name?name=a"
-                val que = Volley.newRequestQueue(activity)
-                val req = StringRequest(
-                    Request.Method.GET,
-                    url,
-                    Response.Listener {
-                        toast(it.toString())
-                    },
-                    Response.ErrorListener {
+                val url = ColorCorrectionHttpClient.getAbsoluteUrl(
+                    "get_grid_by_name?name=${itemNames[position]}"
+                )
+                ColorCorrectionHttpClient.get(url, object: Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
 
-                    })
-                que.add(req)
+                    override fun onResponse(call: Call, response: Response) {
+                        val contents = response.body()!!.string()
+                        doAsync {
+                            uiThread {
+                                toast(contents)
+                            }
+                        }
+                    }
+
+                })
             }
         }
         return layout
@@ -106,9 +114,9 @@ class FiltersFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(items: List<FilterItem>): FiltersFragment =
+        fun newInstance(items: List<String>): FiltersFragment =
                 FiltersFragment().apply {
-                    this.items = items
+                    this.itemNames = items
                 }
     }
 }
