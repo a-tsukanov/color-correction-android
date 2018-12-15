@@ -30,32 +30,35 @@ class FiltersAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentItem = items[position]
-        with(holder.linearLayout) {
-            filter_name.text = currentItem
-            val url = ColorCorrectionHttpClient
-                .getAbsoluteUrl("get_filter_img_by_name?name=$currentItem")
-            Picasso
-                .get()
-                .load(url)
-                .networkPolicy(NetworkPolicy.NO_CACHE)
-                .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .into(filter_item_image, object: Callback{
-                    override fun onError(e: Exception?) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    }
 
-                    override fun onSuccess() {
-                        filter_img_progress.visibility = View.GONE
-                    }
+        fun downloadAndDisplayImage() {
+            with(holder.linearLayout) {
+                filter_name.text = currentItem
+                val url = ColorCorrectionHttpClient
+                    .getAbsoluteUrl("get_filter_img_by_name?name=$currentItem")
+                Picasso
+                    .get()
+                    .load(url)
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .into(filter_item_image, object : Callback {
+                        override fun onError(e: Exception?) {
+                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                        }
 
-                })
+                        override fun onSuccess() {
+                            filter_img_progress.visibility = View.GONE
+                        }
 
-            setOnClickListener {
-                clickListener(position)
+                    })
+
+                setOnClickListener {
+                    clickListener(position)
+                }
             }
         }
+        downloadAndDisplayImage()
     }
-
 
     inner class ViewHolder(val linearLayout: LinearLayout) : RecyclerView.ViewHolder(linearLayout)
 }
