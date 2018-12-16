@@ -26,6 +26,8 @@ import poms.edu.colorcorrectionclient.images.getScaledBitmapForContainer
 
 class ImageFragment : Fragment() {
 
+    lateinit var drawableNotProcessed: Drawable
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,15 +35,16 @@ class ImageFragment : Fragment() {
     ): View? {
 
         val layout = inflater.inflate(R.layout.fragment_image, container, false)
-            .apply {
-                main_image.onClick {
-                    pickImageFromGallery()
-                }
+        with(layout) {
+            main_image.onClick {
+                pickImageFromGallery()
             }
+            drawableNotProcessed = main_image!!.drawable
+        }
         return layout
     }
 
-    val mainImageDrawable: Drawable?
+    val currentDrawable: Drawable?
     get() = view
         ?.main_image
         ?.drawable
@@ -63,9 +66,10 @@ class ImageFragment : Fragment() {
 
         val bitmap = retrieveImage()
         scaleAndShowChosenImage(bitmap)
+        drawableNotProcessed = currentDrawable!!
     }
 
-    fun scaleAndShowChosenImage(bitmap: Bitmap) {
+    private fun scaleAndShowChosenImage(bitmap: Bitmap) {
 
         val imgContainer = view!!
         val scaledBitmap = getScaledBitmapForContainer(bitmap, imgContainer)

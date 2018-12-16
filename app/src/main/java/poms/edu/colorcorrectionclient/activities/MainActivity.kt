@@ -36,8 +36,8 @@ class MainActivity : FragmentActivity() {
 
             hideProgressBar()
             createAndOpenFiltersFragment(itemNames)
-
         }
+
     }
 
     private fun openFragmentInsideContainer(fragment: Fragment, containerId: Int) {
@@ -73,7 +73,7 @@ class MainActivity : FragmentActivity() {
                 )
         }
 
-        val drawable = imageFragment.mainImageDrawable!!
+        val drawable = imageFragment.drawableNotProcessed
         val imgFile = drawableToFile(drawable, filesDir)
         uploadImageAndThen(imgFile) { imageToken ->
             downloadImageAndShow(imageToken, filterName)
