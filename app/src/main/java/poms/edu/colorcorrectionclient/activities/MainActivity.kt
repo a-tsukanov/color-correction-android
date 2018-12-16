@@ -23,20 +23,18 @@ import org.jetbrains.anko.imageBitmap
 import kotlin.math.roundToInt
 
 class MainActivity : Activity(),
-    ImageFragment.OnButtonPressedListener,
     FiltersFragment.OnFragmentInteractionListener {
     override fun onFragmentInteraction(uri: Uri) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onPickImageButtonPressed() {
-        pickImageFromGallery()
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        createAndOpenImageFragment()
+
         downloadFilterNamesAsyncAndDoOnSuccess { _, response ->
             val itemNames = parseFilterNames(response)
 
@@ -44,6 +42,14 @@ class MainActivity : Activity(),
             showFiltersInNewFragment(itemNames)
 
         }
+    }
+
+    private fun createAndOpenImageFragment() {
+        val imgFrag = ImageFragment.newInstance(onButtonPressedCallback = ::pickImageFromGallery)
+        fragmentManager
+            .beginTransaction()
+            .replace(R.id.image_fragment_container, imgFrag)
+            .commit()
     }
 
     private fun hideProgressBar() {
