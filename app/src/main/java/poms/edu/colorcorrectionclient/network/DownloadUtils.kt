@@ -26,7 +26,9 @@ fun parseFilterNames(response: Response): List<String> {
     }
 
 
-fun downloadFilterNamesAsyncAndDoOnSuccess(onSuccessAction: (Call, Response) -> Unit) {
+fun downloadFilterNamesAsyncAndThen(
+    onSuccessAction: (Call, Response) -> Unit,
+    onErrorAction: (Call, IOException) -> Unit) {
 
     ColorCorrectionHttpClient.get(
         ColorCorrectionHttpClient.getAbsoluteUrl("get_all_filters"),
@@ -36,7 +38,7 @@ fun downloadFilterNamesAsyncAndDoOnSuccess(onSuccessAction: (Call, Response) -> 
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                onErrorAction(call, e)
             }
 
         }

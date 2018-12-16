@@ -34,12 +34,16 @@ class MainActivity : FragmentActivity() {
 
         openImageFragment()
 
-        downloadFilterNamesAsyncAndDoOnSuccess { _, response ->
-            val itemNames = parseFilterNames(response)
+        downloadFilterNamesAsyncAndThen(
+            onSuccessAction =  { _, response ->
+                val itemNames = parseFilterNames(response)
 
-            hideProgressBar()
-            createAndOpenFiltersFragment(itemNames)
-        }
+                hideProgressBar()
+                createAndOpenFiltersFragment(itemNames)
+            },
+            onErrorAction = { _, e ->
+                toast("Something went wrong: ${e.message}")
+            })
 
     }
 
@@ -85,11 +89,15 @@ class MainActivity : FragmentActivity() {
                     }
                 )
         }
+        toast("Uploading your image...")
         main_image_progress_bar.visibility = View.VISIBLE
 
         val drawable = imageFragment.drawableNotProcessed
         val imgFile = drawableToFile(drawable, filesDir)
         uploadImageAndThen(imgFile) { imageToken ->
+            runOnUiThread {
+                toast("Getting processed image...")
+            }
             downloadImageAndShow(imageToken, filterName)
         }
     }
