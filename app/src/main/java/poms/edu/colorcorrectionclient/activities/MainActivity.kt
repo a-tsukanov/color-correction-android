@@ -7,6 +7,9 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.View
+import com.squareup.picasso.MemoryPolicy
+import com.squareup.picasso.NetworkPolicy
+import com.squareup.picasso.Picasso
 import poms.edu.colorcorrectionclient.fragments.FiltersFragment
 import poms.edu.colorcorrectionclient.fragments.ImageFragment
 import poms.edu.colorcorrectionclient.R
@@ -16,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_image.view.*
 import okhttp3.*
 import org.jetbrains.anko.*
+import org.json.JSONObject
 import poms.edu.colorcorrectionclient.images.getScaledBitmapForContainer
 import poms.edu.colorcorrectionclient.network.ColorCorrectionHttpClient
 import java.io.*
@@ -111,9 +115,7 @@ class MainActivity : Activity() {
         })
     }
 
-    private fun requestForApplyFilter(filterName: String) {
-        val url = ColorCorrectionHttpClient.getAbsoluteUrl("" +
-                "send_image")
+    private fun getImgFile(): File {
         val img = imageFragment.view.main_image.image
         val imgBitmap = when(img) {
             is BitmapDrawable -> img.bitmap
@@ -123,11 +125,18 @@ class MainActivity : Activity() {
         val tmpFile = File(filesDir, "tmp")
         val outputStream = BufferedOutputStream(FileOutputStream(tmpFile))
         imgBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        return tmpFile
+    }
+
+    private fun uploadImageAndThen(imgFile: File, andThen: (String) -> Unit) {
+        val url = ColorCorrectionHttpClient.getAbsoluteUrl("" +
+                "send_image")
+
 
         val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("file", "a",
-                RequestBody.create(MediaType.parse("image/jpg"), tmpFile)
+                RequestBody.create(MediaType.parse("image/jpg"), imgFile)
             )
             .build()
 
@@ -140,11 +149,32 @@ class MainActivity : Activity() {
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    println(response.body()?.string())
+                    val responseJson = response.body()?.string()
+                    val imageToken = JSONObject(responseJson).getString("image_token")
+                    andThen(imageToken)
                 }
 
             }
         )
+    }
+
+    private fun requestForApplyFilter(filterName: String) {
+        val imgFile = getImgFile()
+        uploadImageAndThen(imgFile) { imageToken ->
+            val url = ColorCorrectionHttpClient.getAbsoluteUrl(
+                "process_image?image_token=$imageToken&grid_name=$filterName")
+            runOnUiThread {
+                Picasso
+                    .get()
+                    .load(url)
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .into(
+                        imageFragment.view.main_image
+                    )
+            }
+        }
+
     }
 
 
