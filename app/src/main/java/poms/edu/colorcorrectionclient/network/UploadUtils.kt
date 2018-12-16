@@ -12,7 +12,7 @@ import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
-public fun uploadImageAndThen(imgFile: File, andThen: (String) -> Unit) {
+fun uploadImageAndThen(imgFile: File, andThen: (String) -> Unit) {
     val url = ColorCorrectionHttpClient.getAbsoluteUrl("" +
             "send_image")
 

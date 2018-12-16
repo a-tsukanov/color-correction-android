@@ -20,9 +20,9 @@ import poms.edu.colorcorrectionclient.R
 
 
 class FiltersFragment : Fragment() {
+
     private var onFilterChosenCallback: ((String) -> Unit)? = null
     private lateinit var filterNames: List<String>
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

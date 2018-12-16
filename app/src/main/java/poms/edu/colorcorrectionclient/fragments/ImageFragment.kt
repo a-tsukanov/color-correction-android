@@ -26,7 +26,7 @@ import poms.edu.colorcorrectionclient.images.getScaledBitmapForContainer
 
 class ImageFragment : Fragment() {
 
-    lateinit var drawableNotProcessed: Drawable
+    public lateinit var drawableNotProcessed: Drawable
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,7 +44,7 @@ class ImageFragment : Fragment() {
         return layout
     }
 
-    val currentDrawable: Drawable?
+    public val currentDrawable: Drawable?
     get() = view
         ?.main_image
         ?.drawable
@@ -81,6 +81,6 @@ class ImageFragment : Fragment() {
 
 
     companion object {
-        const val REQUEST_PICK_IMAGE = 1
+        private const val REQUEST_PICK_IMAGE = 1
     }
 }

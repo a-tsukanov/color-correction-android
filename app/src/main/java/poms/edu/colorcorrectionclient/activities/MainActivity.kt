@@ -71,24 +71,26 @@ class MainActivity : FragmentActivity() {
         progress_circular.visibility = View.GONE
     }
 
+    private fun downloadImageAndShow(imageToken: String, filterName: String) = runOnUiThread {
+
+        downloadProcessedImage(imageToken, filterName)
+            .placeholder(imageFragment.currentDrawable!!)
+            .into(
+                imageFragment.view!!.main_image, object: Callback {
+                    override fun onSuccess() = runOnUiThread {
+                        imageFragment.view!!.main_image_progress_bar.visibility = View.GONE
+                    }
+
+                    override fun onError(e: Exception?) = runOnUiThread {
+                        toast("Something went wrong")
+                    }
+
+                }
+            )
+    }
+
     private fun uploadCurrentImageAndGetProcessedImageAndShow(filterName: String) = with(imageFragment.view!!) {
 
-        fun downloadImageAndShow(imageToken: String, filterName: String) = runOnUiThread {
-            downloadProcessedImage(imageToken, filterName)
-                .placeholder(imageFragment.currentDrawable!!)
-                .into(
-                    imageFragment.view!!.main_image, object: Callback {
-                        override fun onSuccess() = runOnUiThread {
-                            main_image_progress_bar.visibility = View.GONE
-                        }
-
-                        override fun onError(e: Exception?) = runOnUiThread {
-                            toast("Something went wrong")
-                        }
-
-                    }
-                )
-        }
         toast("Uploading your image...")
         main_image_progress_bar.visibility = View.VISIBLE
 
