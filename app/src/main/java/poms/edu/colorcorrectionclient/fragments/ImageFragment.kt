@@ -79,6 +79,10 @@ class ImageFragment : Fragment() {
             .imageBitmap = scaledBitmap
     }
 
+    fun hideProgressBar() {
+        view!!.main_image_progress_bar.visibility = View.GONE
+    }
+
 
     companion object {
         private const val REQUEST_PICK_IMAGE = 1

@@ -12,7 +12,10 @@ import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
-fun uploadImageAndThen(imgFile: File, andThen: (String) -> Unit) {
+fun uploadImageAndThen(
+    imgFile: File,
+    onSuccess: (String) -> Unit,
+    onError: () -> Unit) {
     val url = ColorCorrectionHttpClient.getAbsoluteUrl("" +
             "send_image")
 
@@ -29,13 +32,13 @@ fun uploadImageAndThen(imgFile: File, andThen: (String) -> Unit) {
         requestBody,
         object: Callback {
             override fun onFailure(call: Call, e: IOException) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                onError()
             }
 
             override fun onResponse(call: Call, response: Response) {
                 val responseJson = response.body()?.string()
                 val imageToken = JSONObject(responseJson).getString("image_token")
-                andThen(imageToken)
+                onSuccess(imageToken)
             }
 
         }

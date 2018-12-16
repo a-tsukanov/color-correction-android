@@ -41,7 +41,8 @@ fun downloadFilterNamesAsyncAndThen(
                 onErrorAction(call, e)
             }
 
-        }
+        },
+        withTimeOut = true
     )
 }
 

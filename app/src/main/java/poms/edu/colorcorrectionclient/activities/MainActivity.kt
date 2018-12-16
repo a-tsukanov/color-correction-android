@@ -17,6 +17,7 @@ import poms.edu.colorcorrectionclient.fragments.ImageFragment
 import poms.edu.colorcorrectionclient.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_image.view.*
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import poms.edu.colorcorrectionclient.images.drawableToFile
 import poms.edu.colorcorrectionclient.network.*
@@ -35,15 +36,16 @@ class MainActivity : FragmentActivity() {
         openImageFragment()
 
         downloadFilterNamesAsyncAndThen(
-            onSuccessAction =  { _, response ->
+            onSuccessAction =  { _, response -> runOnUiThread {
                 val itemNames = parseFilterNames(response)
 
                 hideProgressBar()
                 createAndOpenFiltersFragment(itemNames)
-            },
-            onErrorAction = { _, e ->
-                toast("Something went wrong: ${e.message}")
-            })
+            }},
+            onErrorAction = {_, e -> runOnUiThread {
+                hideProgressBar()
+                longToast("Something went wrong: ${e.message}")
+            }})
 
     }
 
@@ -78,11 +80,12 @@ class MainActivity : FragmentActivity() {
             .into(
                 imageFragment.view!!.main_image, object: Callback {
                     override fun onSuccess() = runOnUiThread {
-                        imageFragment.view!!.main_image_progress_bar.visibility = View.GONE
+                        imageFragment.hideProgressBar()
                     }
 
                     override fun onError(e: Exception?) = runOnUiThread {
-                        toast("Something went wrong")
+                        imageFragment.hideProgressBar()
+                        longToast("Something went wrong")
                     }
 
                 }
@@ -96,12 +99,20 @@ class MainActivity : FragmentActivity() {
 
         val drawable = imageFragment.drawableNotProcessed
         val imgFile = drawableToFile(drawable, filesDir)
-        uploadImageAndThen(imgFile) { imageToken ->
-            runOnUiThread {
-                toast("Getting processed image...")
+        uploadImageAndThen(imgFile,
+            onSuccess =  { imageToken ->
+                runOnUiThread {
+                    toast("Getting processed image...")
+                }
+                downloadImageAndShow(imageToken, filterName)
+            },
+            onError = {
+                runOnUiThread {
+                    imageFragment.hideProgressBar()
+                    longToast("Something went wrong")
+                }
             }
-            downloadImageAndShow(imageToken, filterName)
-        }
+        )
     }
 
 }
