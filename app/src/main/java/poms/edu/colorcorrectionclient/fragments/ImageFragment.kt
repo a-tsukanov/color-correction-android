@@ -9,6 +9,7 @@ package poms.edu.colorcorrectionclient.fragments
 
 import android.os.Bundle
 import android.app.Fragment
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +44,11 @@ class ImageFragment : Fragment() {
         super.onDetach()
         onButtonPressedCallback = null
     }
+
+    val mainImageDraweble: Drawable
+    get() = view
+        .main_image
+        .drawable
 
 
     companion object {

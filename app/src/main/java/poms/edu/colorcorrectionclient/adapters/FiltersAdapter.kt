@@ -23,7 +23,7 @@ import java.lang.Exception
 
 
 class FiltersAdapter(
-    private val items: List<String>,
+    private val filterNames: List<String>,
     private val clickListener: (String) -> Unit)
     : RecyclerView.Adapter<FiltersAdapter.ViewHolder>() {
 
@@ -33,10 +33,10 @@ class FiltersAdapter(
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = filterNames.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currentItem = items[position]
+        val currentItem = filterNames[position]
 
         fun downloadAndDisplayImage() {
             with(holder.linearLayout) {
@@ -60,7 +60,7 @@ class FiltersAdapter(
                     })
 
                 setOnClickListener {
-                    clickListener(items[position])
+                    clickListener(filterNames[position])
                 }
             }
         }

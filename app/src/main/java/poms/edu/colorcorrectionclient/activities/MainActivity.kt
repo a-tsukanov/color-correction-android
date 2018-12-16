@@ -8,26 +8,21 @@
 package poms.edu.colorcorrectionclient.activities
 
 import android.app.Activity
+import android.app.Fragment
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.View
-import com.squareup.picasso.MemoryPolicy
-import com.squareup.picasso.NetworkPolicy
-import com.squareup.picasso.Picasso
 import poms.edu.colorcorrectionclient.fragments.FiltersFragment
 import poms.edu.colorcorrectionclient.fragments.ImageFragment
 import poms.edu.colorcorrectionclient.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_image.view.*
-import okhttp3.*
 import org.jetbrains.anko.*
-import org.json.JSONObject
+import poms.edu.colorcorrectionclient.images.drawableToFile
 import poms.edu.colorcorrectionclient.images.getScaledBitmapForContainer
 import poms.edu.colorcorrectionclient.network.*
-import java.io.*
 
 
 class MainActivity : Activity() {
@@ -45,31 +40,38 @@ class MainActivity : Activity() {
             val itemNames = parseFilterNames(response)
 
             hideProgressBar()
-            showFiltersInNewFragment(itemNames)
+            createAndOpenFiltersFragment(itemNames)
 
         }
     }
 
-    private fun createAndOpenImageFragment() {
-        imageFragment = ImageFragment.newInstance(onButtonPressedCallback = ::pickImageFromGallery)
+    private fun openFragmentInsideContainer(fragment: Fragment, containerId: Int) {
         fragmentManager
             .beginTransaction()
-            .replace(R.id.image_fragment_container, imageFragment)
+            .replace(containerId, fragment)
             .commit()
+    }
+
+    private fun createAndOpenImageFragment() {
+
+        imageFragment = ImageFragment
+            .newInstance(onButtonPressedCallback = ::pickImageFromGallery)
+            .also {
+                openFragmentInsideContainer(it, R.id.image_fragment_container)
+            }
+    }
+
+    private fun createAndOpenFiltersFragment(items: List<String>) {
+
+        filtersFragment = FiltersFragment
+            .newInstance(items, ::requestForApplyFilter)
+            .also {
+                openFragmentInsideContainer(it, R.id.filters_fragment_container)
+            }
     }
 
     private fun hideProgressBar() {
         progress_circular.visibility = View.GONE
-    }
-
-    private fun showFiltersInNewFragment(items: List<String>) {
-
-        filtersFragment =
-            FiltersFragment.newInstance(items, ::requestForApplyFilter)
-        fragmentManager
-            .beginTransaction()
-            .replace(R.id.filters_fragment_container, filtersFragment)
-            .commit()
     }
 
     private fun pickImageFromGallery() {
@@ -98,23 +100,9 @@ class MainActivity : Activity() {
 
     }
 
-    private fun getImgFile(): File {
-        val img = imageFragment.view.main_image.image
-        val imgBitmap = when(img) {
-            is BitmapDrawable -> img.bitmap
-            else -> throw NotImplementedError()
-        }
-
-        val tmpFile = File(filesDir, "tmp")
-        val outputStream = BufferedOutputStream(FileOutputStream(tmpFile))
-        imgBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        return tmpFile
-    }
-
-
-
     private fun requestForApplyFilter(filterName: String) {
-        val imgFile = getImgFile()
+        val drawable = imageFragment.mainImageDraweble
+        val imgFile = drawableToFile(drawable, filesDir)
         uploadImageAndThen(imgFile) { imageToken ->
             runOnUiThread {
                 downloadProcessedImage(imageToken, filterName)
@@ -122,9 +110,7 @@ class MainActivity : Activity() {
                         imageFragment.view.main_image
                     )
             }
-
         }
-
     }
 
 
