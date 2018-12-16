@@ -8,11 +8,12 @@
 package poms.edu.colorcorrectionclient.activities
 
 import android.app.Activity
-import android.app.Fragment
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
 import android.view.View
 import poms.edu.colorcorrectionclient.fragments.FiltersFragment
 import poms.edu.colorcorrectionclient.fragments.ImageFragment
@@ -25,7 +26,7 @@ import poms.edu.colorcorrectionclient.images.getScaledBitmapForContainer
 import poms.edu.colorcorrectionclient.network.*
 
 
-class MainActivity : Activity() {
+class MainActivity : FragmentActivity() {
 
     private lateinit var imageFragment: ImageFragment
     private lateinit var filtersFragment: FiltersFragment
@@ -46,7 +47,7 @@ class MainActivity : Activity() {
     }
 
     private fun openFragmentInsideContainer(fragment: Fragment, containerId: Int) {
-        fragmentManager
+        supportFragmentManager
             .beginTransaction()
             .replace(containerId, fragment)
             .commit()
@@ -64,7 +65,7 @@ class MainActivity : Activity() {
     private fun createAndOpenFiltersFragment(items: List<String>) {
 
         filtersFragment = FiltersFragment
-            .newInstance(items, ::requestForApplyFilter)
+            .newInstance(items, onFilterChosenCallback = ::uploadCurrentImageAndGetProcessedImageAndShow)
             .also {
                 openFragmentInsideContainer(it, R.id.filters_fragment_container)
             }
@@ -79,6 +80,16 @@ class MainActivity : Activity() {
         startActivityForResult(intent, REQUEST_PICK_IMAGE)
     }
 
+    private fun scaleAndShowChosenImage(bitmap: Bitmap) {
+        val imgContainer = imageFragment.view!!
+
+        val scaledBitmap = getScaledBitmapForContainer(bitmap, imgContainer)
+
+        imgContainer
+            .main_image
+            .imageBitmap = scaledBitmap
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         fun retrieveImage(): Bitmap {
             val inputStream = contentResolver.openInputStream(data!!.data)
@@ -89,34 +100,26 @@ class MainActivity : Activity() {
             return
 
         val bitmap = retrieveImage()
-
-        val imgContainer = imageFragment.view
-
-        val scaledBitmap = getScaledBitmapForContainer(bitmap, imgContainer)
-
-        imgContainer
-            .main_image
-            .imageBitmap = scaledBitmap
+        scaleAndShowChosenImage(bitmap)
 
     }
 
-    private fun requestForApplyFilter(filterName: String) {
-        val drawable = imageFragment.mainImageDraweble
+    private fun uploadCurrentImageAndGetProcessedImageAndShow(filterName: String) {
+
+        val drawable = imageFragment.mainImageDraweble!!
         val imgFile = drawableToFile(drawable, filesDir)
         uploadImageAndThen(imgFile) { imageToken ->
             runOnUiThread {
                 downloadProcessedImage(imageToken, filterName)
                     .into(
-                        imageFragment.view.main_image
+                        imageFragment.view!!.main_image
                     )
             }
         }
     }
 
-
     companion object {
         private const val REQUEST_PICK_IMAGE = 1
     }
-
 
 }
