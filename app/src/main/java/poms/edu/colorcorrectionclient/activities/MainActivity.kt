@@ -1,17 +1,11 @@
 package poms.edu.colorcorrectionclient.activities
 
 import android.app.Activity
-import android.app.Fragment
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.graphics.RectF
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.View
-import android.widget.ImageView
 import poms.edu.colorcorrectionclient.fragments.FiltersFragment
 import poms.edu.colorcorrectionclient.fragments.ImageFragment
 import poms.edu.colorcorrectionclient.R
@@ -26,6 +20,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.imageBitmap
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
+import poms.edu.colorcorrectionclient.images.getScaledBitmapForContainer
 import poms.edu.colorcorrectionclient.network.ColorCorrectionHttpClient
 import java.io.IOException
 import kotlin.math.roundToInt
@@ -75,32 +70,26 @@ class MainActivity : Activity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+        fun retrieveImage(): Bitmap {
             val inputStream = contentResolver.openInputStream(data!!.data)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-
-            val imgContainer = fragmentManager
-                .findFragmentById(R.id.image_fragment_container)
-                .view
-
-            val imgView: ImageView = imgContainer.main_image
-
-            fun min(a: Float, b: Float) = if (a < b) a else b
-
-            val ratio = min(
-                imgContainer.height.toFloat() / bitmap.height.toFloat(),
-                imgContainer.width.toFloat() / bitmap.width.toFloat()
-            )
-
-            val scaledBitmap = Bitmap.createScaledBitmap(
-                bitmap,
-                (bitmap.width * ratio).roundToInt(),
-                (bitmap.height * ratio).roundToInt(),
-                true
-            )
-
-            imgView.imageBitmap = scaledBitmap
+            return BitmapFactory.decodeStream(inputStream)
         }
+
+        if (requestCode != REQUEST_PICK_IMAGE || resultCode != Activity.RESULT_OK)
+            return
+
+        val bitmap = retrieveImage()
+
+        val imgContainer = fragmentManager
+            .findFragmentById(R.id.image_fragment_container)
+            .view
+
+        val scaledBitmap = getScaledBitmapForContainer(bitmap, imgContainer)
+
+        imgContainer
+            .main_image
+            .imageBitmap = scaledBitmap
+
     }
 
     private fun getFilterInfo(itemName: String) {
