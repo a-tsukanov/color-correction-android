@@ -22,4 +22,19 @@ object ColorCorrectionHttpClient {
             .enqueue(callback)
     }
 
+    public fun post(
+        url: String,
+        requestBody: RequestBody,
+        callback: Callback) {
+
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        client
+            .newCall(request)
+            .enqueue(callback)
+    }
+
 }

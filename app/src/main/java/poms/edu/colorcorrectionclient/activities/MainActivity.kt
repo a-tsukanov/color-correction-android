@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.View
 import poms.edu.colorcorrectionclient.fragments.FiltersFragment
@@ -13,19 +14,17 @@ import poms.edu.colorcorrectionclient.network.downloadFilterNamesAsyncAndDoOnSuc
 import poms.edu.colorcorrectionclient.network.parseFilterNames
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_image.view.*
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.imageBitmap
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import okhttp3.*
+import org.jetbrains.anko.*
 import poms.edu.colorcorrectionclient.images.getScaledBitmapForContainer
 import poms.edu.colorcorrectionclient.network.ColorCorrectionHttpClient
-import java.io.IOException
-import kotlin.math.roundToInt
+import java.io.*
+
 
 class MainActivity : Activity() {
+
+    private lateinit var imageFragment: ImageFragment
+    private lateinit var filtersFragment: FiltersFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,10 +42,10 @@ class MainActivity : Activity() {
     }
 
     private fun createAndOpenImageFragment() {
-        val imgFrag = ImageFragment.newInstance(onButtonPressedCallback = ::pickImageFromGallery)
+        imageFragment = ImageFragment.newInstance(onButtonPressedCallback = ::pickImageFromGallery)
         fragmentManager
             .beginTransaction()
-            .replace(R.id.image_fragment_container, imgFrag)
+            .replace(R.id.image_fragment_container, imageFragment)
             .commit()
     }
 
@@ -56,11 +55,11 @@ class MainActivity : Activity() {
 
     private fun showFiltersInNewFragment(items: List<String>) {
 
-        val frag: FiltersFragment =
-            FiltersFragment.newInstance(items, ::getFilterInfo)
+        filtersFragment =
+            FiltersFragment.newInstance(items, ::requestForApplyFilter)
         fragmentManager
             .beginTransaction()
-            .replace(R.id.filters_fragment_container, frag)
+            .replace(R.id.filters_fragment_container, filtersFragment)
             .commit()
     }
 
@@ -80,9 +79,7 @@ class MainActivity : Activity() {
 
         val bitmap = retrieveImage()
 
-        val imgContainer = fragmentManager
-            .findFragmentById(R.id.image_fragment_container)
-            .view
+        val imgContainer = imageFragment.view
 
         val scaledBitmap = getScaledBitmapForContainer(bitmap, imgContainer)
 
@@ -113,6 +110,43 @@ class MainActivity : Activity() {
 
         })
     }
+
+    private fun requestForApplyFilter(filterName: String) {
+        val url = ColorCorrectionHttpClient.getAbsoluteUrl("" +
+                "send_image")
+        val img = imageFragment.view.main_image.image
+        val imgBitmap = when(img) {
+            is BitmapDrawable -> img.bitmap
+            else -> throw NotImplementedError()
+        }
+
+        val tmpFile = File(filesDir, "tmp")
+        val outputStream = BufferedOutputStream(FileOutputStream(tmpFile))
+        imgBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+
+        val requestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("file", "a",
+                RequestBody.create(MediaType.parse("image/jpg"), tmpFile)
+            )
+            .build()
+
+        ColorCorrectionHttpClient.post(
+            url,
+            requestBody,
+            object: Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    println(response.body()?.string())
+                }
+
+            }
+        )
+    }
+
 
     companion object {
         private const val REQUEST_PICK_IMAGE = 1
