@@ -19,15 +19,18 @@ import poms.edu.colorcorrectionclient.network.downloadFilterNamesAsyncAndDoOnSuc
 import poms.edu.colorcorrectionclient.network.parseFilterNames
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_image.view.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.imageBitmap
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
+import poms.edu.colorcorrectionclient.network.ColorCorrectionHttpClient
+import java.io.IOException
 import kotlin.math.roundToInt
 
-class MainActivity : Activity(),
-    FiltersFragment.OnFragmentInteractionListener {
-    override fun onFragmentInteraction(uri: Uri) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
+class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +62,7 @@ class MainActivity : Activity(),
     private fun showFiltersInNewFragment(items: List<String>) {
 
         val frag: FiltersFragment =
-            FiltersFragment.newInstance(items)
+            FiltersFragment.newInstance(items, ::getFilterInfo)
         fragmentManager
             .beginTransaction()
             .replace(R.id.filters_fragment_container, frag)
@@ -98,6 +101,28 @@ class MainActivity : Activity(),
 
             imgView.imageBitmap = scaledBitmap
         }
+    }
+
+    private fun getFilterInfo(itemName: String) {
+        toast(itemName)
+        val url = ColorCorrectionHttpClient.getAbsoluteUrl(
+            "get_grid_by_name?name=$itemName"
+        )
+        ColorCorrectionHttpClient.get(url, object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val contents = response.body()!!.string()
+                doAsync {
+                    uiThread {
+                        toast(contents)
+                    }
+                }
+            }
+
+        })
     }
 
     companion object {

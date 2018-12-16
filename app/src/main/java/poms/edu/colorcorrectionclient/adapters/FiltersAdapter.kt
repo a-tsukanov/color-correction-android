@@ -17,7 +17,7 @@ import java.lang.Exception
 
 class FiltersAdapter(
     private val items: List<String>,
-    private val clickListener: (Int) -> Unit)
+    private val clickListener: (String) -> Unit)
     : RecyclerView.Adapter<FiltersAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): ViewHolder {
@@ -53,7 +53,7 @@ class FiltersAdapter(
                     })
 
                 setOnClickListener {
-                    clickListener(position)
+                    clickListener(items[position])
                 }
             }
         }
