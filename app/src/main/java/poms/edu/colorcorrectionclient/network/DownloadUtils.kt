@@ -7,6 +7,11 @@
 
 package poms.edu.colorcorrectionclient.network
 
+import com.squareup.picasso.MemoryPolicy
+import com.squareup.picasso.NetworkPolicy
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.RequestCreator
+import kotlinx.android.synthetic.main.fragment_image.view.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -36,4 +41,15 @@ fun downloadFilterNamesAsyncAndDoOnSuccess(onSuccessAction: (Call, Response) -> 
 
         }
     )
+}
+
+fun downloadProcessedImage(imageToken: String, filterName: String): RequestCreator {
+    val url = ColorCorrectionHttpClient.getAbsoluteUrl(
+        "process_image?image_token=$imageToken&grid_name=$filterName")
+
+    return Picasso
+        .get()
+        .load(url)
+        .networkPolicy(NetworkPolicy.NO_CACHE)
+        .memoryPolicy(MemoryPolicy.NO_CACHE)
 }
