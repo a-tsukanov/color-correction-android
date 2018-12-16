@@ -30,7 +30,7 @@ class FiltersFragment : Fragment() {
     ): View? {
 
         val layout = inflater.inflate(R.layout.fragment_filters, container, false)
-        layout.recycler_view.apply {
+        with(layout.recycler_view) {
             layoutManager = LinearLayoutManager(
                 activity,
                 LinearLayout.HORIZONTAL,
