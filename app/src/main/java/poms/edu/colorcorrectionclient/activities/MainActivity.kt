@@ -11,13 +11,16 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.view.View
+import com.squareup.picasso.Callback
 import poms.edu.colorcorrectionclient.fragments.FiltersFragment
 import poms.edu.colorcorrectionclient.fragments.ImageFragment
 import poms.edu.colorcorrectionclient.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_image.view.*
+import org.jetbrains.anko.toast
 import poms.edu.colorcorrectionclient.images.drawableToFile
 import poms.edu.colorcorrectionclient.network.*
+import java.lang.Exception
 
 
 class MainActivity : FragmentActivity() {
@@ -64,14 +67,25 @@ class MainActivity : FragmentActivity() {
         progress_circular.visibility = View.GONE
     }
 
-    private fun uploadCurrentImageAndGetProcessedImageAndShow(filterName: String) {
+    private fun uploadCurrentImageAndGetProcessedImageAndShow(filterName: String) = with(imageFragment.view!!) {
 
         fun downloadImageAndShow(imageToken: String, filterName: String) = runOnUiThread {
             downloadProcessedImage(imageToken, filterName)
+                .placeholder(imageFragment.currentDrawable!!)
                 .into(
-                    imageFragment.view!!.main_image
+                    imageFragment.view!!.main_image, object: Callback {
+                        override fun onSuccess() = runOnUiThread {
+                            main_image_progress_bar.visibility = View.GONE
+                        }
+
+                        override fun onError(e: Exception?) = runOnUiThread {
+                            toast("Something went wrong")
+                        }
+
+                    }
                 )
         }
+        main_image_progress_bar.visibility = View.VISIBLE
 
         val drawable = imageFragment.drawableNotProcessed
         val imgFile = drawableToFile(drawable, filesDir)
