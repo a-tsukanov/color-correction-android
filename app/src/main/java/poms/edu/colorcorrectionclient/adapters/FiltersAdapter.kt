@@ -13,12 +13,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.squareup.picasso.Callback
-import com.squareup.picasso.MemoryPolicy
-import com.squareup.picasso.NetworkPolicy
-import com.squareup.picasso.Picasso
 import poms.edu.colorcorrectionclient.R
 import kotlinx.android.synthetic.main.item_filter.view.*
-import poms.edu.colorcorrectionclient.network.ColorCorrectionHttpClient
+import poms.edu.colorcorrectionclient.network.downloadFilterIcon
 import java.lang.Exception
 
 
@@ -36,18 +33,12 @@ class FiltersAdapter(
     override fun getItemCount(): Int = filterNames.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currentItem = filterNames[position]
+        val currentFilter = filterNames[position]
 
         fun downloadAndDisplayImage() {
             with(holder.linearLayout) {
-                filter_name.text = currentItem
-                val url = ColorCorrectionHttpClient
-                    .getAbsoluteUrl("get_filter_img_by_name?name=$currentItem")
-                Picasso
-                    .get()
-                    .load(url)
-                    .networkPolicy(NetworkPolicy.NO_CACHE)
-                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                filter_name.text = currentFilter
+                downloadFilterIcon(currentFilter)
                     .into(filter_item_image, object : Callback {
                         override fun onError(e: Exception?) {
                             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

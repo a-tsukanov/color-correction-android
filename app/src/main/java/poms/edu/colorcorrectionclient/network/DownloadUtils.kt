@@ -43,13 +43,17 @@ fun downloadFilterNamesAsyncAndDoOnSuccess(onSuccessAction: (Call, Response) -> 
     )
 }
 
-fun downloadProcessedImage(imageToken: String, filterName: String): RequestCreator {
-    val url = ColorCorrectionHttpClient.getAbsoluteUrl(
-        "process_image?image_token=$imageToken&grid_name=$filterName")
-
+private fun downloadImage(relativeUrl: String): RequestCreator {
+    val absoluteUrl = ColorCorrectionHttpClient.getAbsoluteUrl(relativeUrl)
     return Picasso
         .get()
-        .load(url)
+        .load(absoluteUrl)
         .networkPolicy(NetworkPolicy.NO_CACHE)
         .memoryPolicy(MemoryPolicy.NO_CACHE)
 }
+
+fun downloadProcessedImage(imageToken: String, filterName: String): RequestCreator =
+        downloadImage("process_image?image_token=$imageToken&grid_name=$filterName")
+
+fun downloadFilterIcon(filterName: String): RequestCreator =
+        downloadImage("get_filter_img_by_name?name=$filterName")
