@@ -8,6 +8,7 @@
 package poms.edu.colorcorrectionclient.adapters
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +42,7 @@ class FiltersAdapter(
                 downloadFilterIcon(currentFilter)
                     .into(filter_item_image, object : Callback {
                         override fun onError(e: Exception?) {
-                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                            Log.e("ColorCorrectionClient", "Error loading filter image $currentFilter")
                         }
 
                         override fun onSuccess() {
