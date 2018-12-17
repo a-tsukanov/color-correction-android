@@ -36,25 +36,24 @@ class FiltersAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentFilter = filterNames[position]
 
-        fun downloadAndDisplayImage() {
-            with(holder.linearLayout) {
-                filter_name.text = currentFilter
-                downloadFilterIcon(currentFilter)
-                    .into(filter_item_image, object : Callback {
-                        override fun onError(e: Exception?) {
-                            Log.e("ColorCorrectionClient", "Error loading filter image $currentFilter")
-                        }
+        fun downloadAndDisplayImage() = with(holder.linearLayout) {
+            filter_name.text = currentFilter
+            downloadFilterIcon(currentFilter)
+                .into(filter_item_image, object : Callback {
+                    override fun onError(e: Exception?) {
+                        Log.e("ColorCorrectionClient", "Error loading filter image $currentFilter")
+                    }
 
-                        override fun onSuccess() {
-                            filter_img_progress.visibility = View.GONE
-                        }
+                    override fun onSuccess() {
+                        filter_img_progress.visibility = View.GONE
+                    }
 
-                    })
+                })
 
-                setOnClickListener {
-                    clickListener(filterNames[position])
-                }
+            setOnClickListener {
+                clickListener(filterNames[position])
             }
+
         }
         downloadAndDisplayImage()
     }
