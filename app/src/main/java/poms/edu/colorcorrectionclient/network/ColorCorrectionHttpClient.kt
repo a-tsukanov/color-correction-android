@@ -30,13 +30,10 @@ object ColorCorrectionHttpClient {
             .url(url)
             .build()
 
-        when(withTimeOut) {
-            false -> client
-            true -> clientWithTimeout
-        }.run {
-                newCall(request)
-                .enqueue(callback)
-        }
+        run {
+            if (withTimeOut) clientWithTimeout else client
+        }   .newCall(request)
+            .enqueue(callback)
     }
 
     public fun post(
