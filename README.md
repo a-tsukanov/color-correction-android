@@ -2,12 +2,17 @@
 Android client for [color correction server](https://github.com/a-tsukanov/color_correction)
 
 # Screenshots
-[](screenshots/01.png)
-[](screenshots/02.png)
+<p float="left">
+  <img src=screenshots/01.png width="400" />
+  <img src=screenshots/02.png width="400" />
+</p>
 
-[](screenshots/03.png)
-[](screenshots/04.png)
-[](screenshots/05.png)
+<p float="left">
+  <img src=screenshots/03.png width="400" />
+  <img src=screenshots/04.png width="400" />
+</p>
 
-[](screenshots/06.png)
-[](screenshots/07.png)
+<p float="left">
+  <img src=screenshots/06.png width="400" />
+  <img src=screenshots/07.png width="400" />
+</p>
