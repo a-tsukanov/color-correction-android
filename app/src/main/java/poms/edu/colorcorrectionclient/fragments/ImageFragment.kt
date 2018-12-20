@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_image.view.*
+import org.jetbrains.anko.image
 import org.jetbrains.anko.imageBitmap
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import poms.edu.colorcorrectionclient.R
@@ -37,8 +38,11 @@ class ImageFragment : Fragment() {
 
         val layout = inflater.inflate(R.layout.fragment_image, container, false)
         with(layout) {
-            main_image.onClick {
+            btn_open.onClick {
                 pickImageFromGallery()
+            }
+            btn_disable.onClick {
+                main_image.image = drawableNotProcessed
             }
             drawableNotProcessed = main_image!!.drawable
         }
