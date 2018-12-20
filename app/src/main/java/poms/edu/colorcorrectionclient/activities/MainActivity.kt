@@ -63,7 +63,7 @@ class MainActivity : FragmentActivity() {
     private fun createAndOpenFiltersFragment(items: List<String>) {
 
         filtersFragment = FiltersFragment
-            .newInstance(items, onFilterChosenCallback = ::uploadCurrentImageAndGetProcessedImageAndShow)
+            .newInstance(items, onFilterChosenCallback = ::getPrecessedImageIntoImageView)
             .also {
                 openFragmentInsideContainer(it, R.id.filters_fragment_container)
             }
@@ -92,15 +92,23 @@ class MainActivity : FragmentActivity() {
             )
     }
 
-    private fun uploadCurrentImageAndGetProcessedImageAndShow(filterName: String) = with(imageFragment.view!!) {
+    private fun getPrecessedImageIntoImageView(filterName: String) = with(imageFragment.view!!) {
+
+
+        main_image_progress_bar.visibility = View.VISIBLE
+
+        imageFragment.imageToken?.run {
+            downloadImageAndShow(this, filterName)
+            return@with
+        }
 
         toast("Uploading your image...")
-        main_image_progress_bar.visibility = View.VISIBLE
 
         val drawable = imageFragment.drawableNotProcessed
         val imgFile = drawableToFile(drawable, filesDir)
         uploadImageAndThen(imgFile,
             onSuccess =  { imageToken ->
+                imageFragment.imageToken = imageToken
                 runOnUiThread {
                     toast("Getting processed image...")
                 }
