@@ -35,17 +35,28 @@ class MainActivity : FragmentActivity() {
 
         openImageFragment()
 
-        downloadFilterNamesAsyncAndThen(
-            onSuccessAction =  { _, response -> runOnUiThread {
-                val itemNames = parseFilterNames(response)
+        try {
 
-                hideProgressBar()
-                createAndOpenFiltersFragment(itemNames)
-            }},
-            onErrorAction = {_, e -> runOnUiThread {
-                hideProgressBar()
-                longToast("Something went wrong: ${e.message}")
-            }})
+            downloadFilterNamesAsyncAndThen(
+                onSuccessAction = { _, response ->
+                    runOnUiThread {
+                        val itemNames = parseFilterNames(response)
+
+                        hideProgressBar()
+                        createAndOpenFiltersFragment(itemNames)
+                    }
+                },
+                onErrorAction = { _, e ->
+                    runOnUiThread {
+                        hideProgressBar()
+                        longToast("Something went wrong: ${e.message}")
+                    }
+                })
+        }
+        catch (e: Throwable) {
+            hideProgressBar()
+            longToast("Oops! Something went wrong.")
+        }
 
     }
 

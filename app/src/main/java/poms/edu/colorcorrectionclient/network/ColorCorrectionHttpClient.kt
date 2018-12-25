@@ -17,7 +17,7 @@ object ColorCorrectionHttpClient {
         .readTimeout(10, TimeUnit.SECONDS)
         .build()
 
-    private const val BASE_URL = "http://10.0.2.2:5000/"
+    public lateinit var BASE_URL: String
 
     public fun getAbsoluteUrl(suffix: String): String = "$BASE_URL$suffix"
 
