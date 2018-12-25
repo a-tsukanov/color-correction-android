@@ -7,9 +7,12 @@
 
 package poms.edu.colorcorrectionclient.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import com.squareup.picasso.Callback
 import poms.edu.colorcorrectionclient.fragments.FiltersFragment
@@ -28,6 +31,18 @@ class MainActivity : FragmentActivity() {
 
     private val imageFragment: ImageFragment = ImageFragment()
     private lateinit var filtersFragment: FiltersFragment
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean =
+        if (item?.itemId == R.id.gotoserver_address) {
+            startActivity(Intent(this, SetupServerActivity::class.java))
+            true
+        }
+        else super.onOptionsItemSelected(item)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +70,7 @@ class MainActivity : FragmentActivity() {
         }
         catch (e: Throwable) {
             hideProgressBar()
-            longToast("Oops! Something went wrong.")
+            toast("Oops! Something went wrong.")
         }
 
     }

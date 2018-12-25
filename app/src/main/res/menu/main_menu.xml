@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2018 Aliaksandr Tsukanau.
   ~ Licensed under MIT Licence.
@@ -5,7 +6,7 @@
   ~ See the MIT License for more details. https://www.mitlicense.org/
   -->
 
-<resources>
-    <string name="app_name">Color Correction Client</string>
-
-</resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/gotoserver_address"
+          android:title="Change server"/>
+</menu>

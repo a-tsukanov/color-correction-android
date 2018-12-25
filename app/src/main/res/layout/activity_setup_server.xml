@@ -14,7 +14,7 @@
     tools:context=".activities.SetupServerActivity">
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -42,10 +42,10 @@
 
         <EditText
             android:id="@+id/server_address_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:text="http://10.0.2.2:5000"
+            android:text="http://10.0.2.2:5000/"
             android:ems="10"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
