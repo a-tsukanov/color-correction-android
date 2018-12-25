@@ -15,16 +15,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.squareup.picasso.Callback
-import poms.edu.colorcorrectionclient.fragments.FiltersFragment
-import poms.edu.colorcorrectionclient.fragments.ImageFragment
-import poms.edu.colorcorrectionclient.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_image.view.*
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
+import poms.edu.colorcorrectionclient.R
+import poms.edu.colorcorrectionclient.fragments.FiltersFragment
+import poms.edu.colorcorrectionclient.fragments.ImageFragment
 import poms.edu.colorcorrectionclient.images.drawableToFile
-import poms.edu.colorcorrectionclient.network.*
-import java.lang.Exception
+import poms.edu.colorcorrectionclient.network.downloadFilterNamesAsyncAndThen
+import poms.edu.colorcorrectionclient.network.downloadProcessedImage
+import poms.edu.colorcorrectionclient.network.parseFilterNames
+import poms.edu.colorcorrectionclient.network.uploadImageAndThen
 
 
 class MainActivity : FragmentActivity() {
@@ -41,8 +43,8 @@ class MainActivity : FragmentActivity() {
         if (item?.itemId == R.id.gotoserver_address) {
             startActivity(Intent(this, SetupServerActivity::class.java))
             true
-        }
-        else super.onOptionsItemSelected(item)
+        } else super.onOptionsItemSelected(item)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

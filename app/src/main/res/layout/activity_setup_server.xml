@@ -14,6 +14,7 @@
     tools:context=".activities.SetupServerActivity">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/form"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
