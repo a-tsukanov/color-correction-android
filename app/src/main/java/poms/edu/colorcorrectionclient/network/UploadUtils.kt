@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Aliaksandr Tsukanau.
+ * Copyright (c) 2019 Aliaksandr Tsukanau.
  * Licensed under MIT Licence.
  * You may not use this file except in compliance with MIT License.
  * See the MIT License for more details. https://www.mitlicense.org/
@@ -22,7 +22,7 @@ fun uploadImageAndThen(
 
     val requestBody = MultipartBody.Builder()
         .setType(MultipartBody.FORM)
-        .addFormDataPart("file", "a",
+        .addFormDataPart("file", "default.jpeg",
             RequestBody.create(MediaType.parse("image/jpg"), imgFile)
         )
         .build()

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2018 Aliaksandr Tsukanau.
+  ~ Copyright (c) 2019 Aliaksandr Tsukanau.
   ~ Licensed under MIT Licence.
   ~ You may not use this file except in compliance with MIT License.
   ~ See the MIT License for more details. https://www.mitlicense.org/
--->
+  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="poms.edu.colorcorrectionclient">
