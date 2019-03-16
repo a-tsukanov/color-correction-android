@@ -7,7 +7,10 @@
 
 package poms.edu.colorcorrectionclient.activities
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
@@ -149,6 +152,20 @@ class MainActivity : FragmentActivity() {
                 }
             }
         )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        fun retrieveImage(): Bitmap {
+            val inputStream = contentResolver.openInputStream(data!!.data)
+            return BitmapFactory.decodeStream(inputStream)
+        }
+
+        if (requestCode != FiltersFragment.REQUEST_PICK_IMAGE || resultCode != Activity.RESULT_OK)
+            return
+
+        val bitmap = retrieveImage()
+        imageFragment.scaleAndShowChosenImage(bitmap)
     }
 
 }

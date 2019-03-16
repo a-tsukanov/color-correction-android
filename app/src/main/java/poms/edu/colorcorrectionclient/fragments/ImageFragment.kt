@@ -38,12 +38,6 @@ class ImageFragment : Fragment() {
 
         val layout = inflater.inflate(R.layout.fragment_image, container, false)
         with(layout) {
-            btn_open.onClick {
-                pickImageFromGallery()
-            }
-            btn_disable.onClick {
-                main_image.image = drawableNotProcessed
-            }
             drawableNotProcessed = main_image!!.drawable
         }
         return layout
@@ -54,28 +48,7 @@ class ImageFragment : Fragment() {
         ?.main_image
         ?.drawable
 
-    private fun pickImageFromGallery() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "image/*" }
-        startActivityForResult(intent, REQUEST_PICK_IMAGE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-        fun retrieveImage(): Bitmap {
-            val inputStream = activity!!.contentResolver.openInputStream(data!!.data)
-            return BitmapFactory.decodeStream(inputStream)
-        }
-
-        if (requestCode != REQUEST_PICK_IMAGE || resultCode != Activity.RESULT_OK)
-            return
-
-        val bitmap = retrieveImage()
-        scaleAndShowChosenImage(bitmap)
-        drawableNotProcessed = currentDrawable!!
-        imageToken = null
-    }
-
-    private fun scaleAndShowChosenImage(bitmap: Bitmap) {
+    public fun scaleAndShowChosenImage(bitmap: Bitmap) {
 
         val imgContainer = view!!
         val scaledBitmap = getScaledBitmapForContainer(bitmap, imgContainer)
@@ -83,14 +56,13 @@ class ImageFragment : Fragment() {
         imgContainer
             .main_image
             .imageBitmap = scaledBitmap
+
+        drawableNotProcessed = currentDrawable!!
+        imageToken = null
     }
 
     fun hideProgressBar() {
         view!!.main_image_progress_bar.visibility = View.GONE
     }
 
-
-    companion object {
-        private const val REQUEST_PICK_IMAGE = 1
-    }
 }

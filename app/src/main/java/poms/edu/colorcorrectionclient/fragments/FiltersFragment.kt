@@ -7,6 +7,7 @@
 
 package poms.edu.colorcorrectionclient.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -15,6 +16,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.fragment_filters.view.*
+import kotlinx.android.synthetic.main.fragment_image.view.*
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import poms.edu.colorcorrectionclient.adapters.FiltersAdapter
 import poms.edu.colorcorrectionclient.R
 
@@ -38,7 +41,17 @@ class FiltersFragment : Fragment() {
             )
             adapter = FiltersAdapter(filterNames) { item -> onFilterChosenCallback?.invoke(item) }
         }
+        with(layout) {
+            btn_open.onClick {
+                pickImageFromGallery()
+            }
+        }
         return layout
+    }
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "image/*" }
+        activity?.startActivityForResult(intent, FiltersFragment.REQUEST_PICK_IMAGE)
     }
 
     override fun onDetach() {
@@ -56,5 +69,8 @@ class FiltersFragment : Fragment() {
                     this.filterNames = filterNames
                     this.onFilterChosenCallback = onFilterChosenCallback
                 }
+
+        const val REQUEST_PICK_IMAGE = 1
+
     }
 }
