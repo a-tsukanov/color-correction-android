@@ -29,6 +29,7 @@ class ImageFragment : Fragment() {
 
     public lateinit var drawableNotProcessed: Drawable
     public var imageToken: String? = null
+    private var drawableProcessed: Drawable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,9 +38,20 @@ class ImageFragment : Fragment() {
     ): View? {
 
         val layout = inflater.inflate(R.layout.fragment_image, container, false)
-        with(layout) {
-            drawableNotProcessed = main_image!!.drawable
+        layout.main_image.let { img_view ->
+            img_view.setOnTouchListener { _, motionEvent ->
+                when (motionEvent.action) {
+                    android.view.MotionEvent.ACTION_DOWN -> {
+                        drawableProcessed = currentDrawable
+                        img_view.image = drawableNotProcessed
+                    }
+                    android.view.MotionEvent.ACTION_UP -> img_view.image = drawableProcessed
+                    else -> {}
+                }
+                true
+            }
         }
+        drawableNotProcessed = layout.main_image!!.drawable
         return layout
     }
 

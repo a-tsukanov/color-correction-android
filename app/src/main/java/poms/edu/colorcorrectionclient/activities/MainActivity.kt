@@ -94,7 +94,7 @@ class MainActivity : FragmentActivity() {
     private fun createAndOpenFiltersFragment(items: List<String>) {
 
         filtersFragment = FiltersFragment
-            .newInstance(items, onFilterChosenCallback = ::getPrecessedImageIntoImageView)
+            .newInstance(items, onFilterChosenCallback = ::getProcessedImageIntoImageView)
             .also {
                 openFragmentInsideContainer(it, R.id.filters_fragment_container)
             }
@@ -123,7 +123,7 @@ class MainActivity : FragmentActivity() {
             )
     }
 
-    private fun getPrecessedImageIntoImageView(filterName: String) = with(imageFragment.view!!) {
+    private fun getProcessedImageIntoImageView(filterName: String) = with(imageFragment.view!!) {
 
 
         main_image_progress_bar.visibility = View.VISIBLE
