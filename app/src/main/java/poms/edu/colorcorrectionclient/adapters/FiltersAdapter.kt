@@ -7,6 +7,7 @@
 
 package poms.edu.colorcorrectionclient.adapters
 
+import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,7 +28,7 @@ class FiltersAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_filter, parent, false) as LinearLayout
+            .inflate(R.layout.item_filter, parent, false) as CardView
         return ViewHolder(view)
     }
 
@@ -58,5 +59,5 @@ class FiltersAdapter(
         downloadAndDisplayImage()
     }
 
-    inner class ViewHolder(val linearLayout: LinearLayout) : RecyclerView.ViewHolder(linearLayout)
+    inner class ViewHolder(val linearLayout: CardView) : RecyclerView.ViewHolder(linearLayout)
 }
