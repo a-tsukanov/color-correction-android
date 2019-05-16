@@ -13,7 +13,7 @@
     android:layout_height="match_parent">
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/btn_save"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_margin="0dp"
@@ -23,7 +23,7 @@
         app:layout_constraintEnd_toStartOf="@+id/btn_open"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/button3"
+        app:layout_constraintStart_toEndOf="@+id/btn_swap_color"
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/ic_save_black_24dp" />
 
@@ -40,11 +40,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintStart_toEndOf="@+id/btn_save"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/button3"
+        android:id="@+id/btn_swap_color"
         android:src="@drawable/palette"
         android:layout_width="0dp"
         android:layout_height="60dp"
@@ -52,7 +52,7 @@
         android:scaleType="fitCenter"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toTopOf="@+id/recycler_view"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton"
+        app:layout_constraintEnd_toStartOf="@+id/btn_save"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"

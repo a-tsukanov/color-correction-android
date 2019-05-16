@@ -7,13 +7,23 @@
 
 package poms.edu.colorcorrectionclient.activities
 
+import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.support.v4.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,6 +31,7 @@ import com.squareup.picasso.Callback
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_image.view.*
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.support.v4.longToast
 import org.jetbrains.anko.toast
 import poms.edu.colorcorrectionclient.R
 import poms.edu.colorcorrectionclient.fragments.FiltersFragment
@@ -30,6 +41,8 @@ import poms.edu.colorcorrectionclient.network.downloadFilterNamesAsyncAndThen
 import poms.edu.colorcorrectionclient.network.downloadProcessedImage
 import poms.edu.colorcorrectionclient.network.parseFilterNames
 import poms.edu.colorcorrectionclient.network.uploadImageAndThen
+import java.io.File
+import java.util.*
 
 
 class MainActivity : FragmentActivity() {
@@ -94,7 +107,11 @@ class MainActivity : FragmentActivity() {
     private fun createAndOpenFiltersFragment(items: List<String>) {
 
         filtersFragment = FiltersFragment
-            .newInstance(items, onFilterChosenCallback = ::getProcessedImageIntoImageView)
+            .newInstance(
+                items,
+                onFilterChosenCallback = ::getProcessedImageIntoImageView,
+                onSaveClickedCallback = ::saveImage
+            )
             .also {
                 openFragmentInsideContainer(it, R.id.filters_fragment_container)
             }
@@ -166,6 +183,58 @@ class MainActivity : FragmentActivity() {
 
         val bitmap = retrieveImage()
         imageFragment.scaleAndShowChosenImage(bitmap)
+    }
+
+    private fun saveImage() {
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                PERMISSION_WRITE
+                )
+        }
+        else {
+            saveImageImpl()
+        }
+    }
+
+    private fun saveImageImpl() {
+        val drawable = imageFragment.currentDrawable
+        val bitmap = if (drawable is BitmapDrawable) {
+            drawable.bitmap
+        }
+        else throw IllegalArgumentException()
+
+        val name = Calendar.getInstance().time.toString()
+        val fullName = "LUT_$name.jpeg"
+
+        MediaStore.Images.Media.insertImage(contentResolver, bitmap, fullName, "")
+
+        longToast("Image was saved")
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSION_WRITE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    saveImageImpl()
+                } else {
+                    longToast("Not able to save image without your permission")
+                }
+                return
+            }
+
+            else -> {
+            }
+        }
+    }
+
+
+
+    companion object {
+        const val PERMISSION_WRITE = 47
     }
 
 }
